@@ -13,6 +13,7 @@ import {
   analyzeTestCoverage,
   analyzeVulnerableAreas
 } from './src/analysis.js';
+import { generatePdfFromHtml, generateMissingTestsExcel } from './src/reports.js';
 
 dotenv.config();
 
@@ -138,6 +139,68 @@ app.get('/api/result/:sessionId/vulnerable-areas', async (req, res) => {
   try {
     const out = await analyzeVulnerableAreas({ sessionId: req.params.sessionId });
     res.json(out);
+  } catch (e) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
+
+app.get('/api/result/:sessionId/requirement-gaps/pdf', async (req, res) => {
+  try {
+    const out = await analyzeRequirementGaps({ sessionId: req.params.sessionId });
+    const sessionPath = path.join(sessionsDir, req.params.sessionId);
+    const manifestPath = path.join(sessionPath, 'manifest.json');
+    const manifestRaw = await fs.readFile(manifestPath, 'utf-8');
+    const manifest = JSON.parse(manifestRaw);
+    const requirementName = manifest.files.requirements.originalName;
+    const pdf = await generatePdfFromHtml(out.html, 'Requirement Gaps Report', requirementName);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="requirement-gaps.pdf"');
+    res.send(pdf);
+  } catch (e) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
+
+app.get('/api/result/:sessionId/test-coverage/pdf', async (req, res) => {
+  try {
+    const out = await analyzeTestCoverage({ sessionId: req.params.sessionId });
+    const sessionPath = path.join(sessionsDir, req.params.sessionId);
+    const manifestPath = path.join(sessionPath, 'manifest.json');
+    const manifestRaw = await fs.readFile(manifestPath, 'utf-8');
+    const manifest = JSON.parse(manifestRaw);
+    const requirementName = manifest.files.requirements.originalName;
+    const pdf = await generatePdfFromHtml(out.html, 'Test Coverage Report', requirementName);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="test-coverage.pdf"');
+    res.send(pdf);
+  } catch (e) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
+
+app.get('/api/result/:sessionId/test-coverage/missing-tests-xlsx', async (req, res) => {
+  try {
+    const buf = generateMissingTestsExcel();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="missing-tests.xlsx"');
+    res.send(buf);
+  } catch (e) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
+
+app.get('/api/result/:sessionId/vulnerable-areas/pdf', async (req, res) => {
+  try {
+    const out = await analyzeVulnerableAreas({ sessionId: req.params.sessionId });
+    const sessionPath = path.join(sessionsDir, req.params.sessionId);
+    const manifestPath = path.join(sessionPath, 'manifest.json');
+    const manifestRaw = await fs.readFile(manifestPath, 'utf-8');
+    const manifest = JSON.parse(manifestRaw);
+    const requirementName = manifest.files.requirements.originalName;
+    const pdf = await generatePdfFromHtml(out.html, 'Vulnerable Areas Report', requirementName);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="vulnerable-areas.pdf"');
+    res.send(pdf);
   } catch (e) {
     res.status(500).json({ error: e?.message || String(e) });
   }
