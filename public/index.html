@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QA Analyzer Agent</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>QA Analyzer Agent</h1>
+        <p>Upload requirements + defect history + test cases and generate QA insights.</p>
+      </header>
+
+      <main class="card">
+        <form id="uploadForm">
+          <div class="grid">
+            <label class="field">
+              <span>Requirements (Word .docx or PDF .pdf)</span>
+              <input name="requirements" type="file" accept=".docx,.pdf" required />
+            </label>
+
+            <label class="field">
+              <span>Known Defects (Excel .xlsx)</span>
+              <input name="defects" type="file" accept=".xlsx,.xls" required />
+            </label>
+
+            <label class="field">
+              <span>Test Cases (Excel .xlsx)</span>
+              <input name="testcases" type="file" accept=".xlsx,.xls" required />
+            </label>
+          </div>
+
+          <div class="actions">
+            <button id="analyzeBtn" type="submit">Analyze</button>
+            <span id="status" class="status"></span>
+          </div>
+        </form>
+
+        <div class="hint">
+          <div class="hint-title">Notes</div>
+          <div class="hint-body">
+            <div>Requirements can be .docx or .pdf</div>
+            <div>Spreadsheets are read as text rows (any column layout is fine)</div>
+            <div>Set <code>GEMINI_API_KEY</code> in a <code>.env</code> file</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

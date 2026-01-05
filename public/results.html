@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QA Analyzer Results</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Analysis Results</h1>
+        <p>Select an analysis view.</p>
+      </header>
+
+      <main class="card">
+        <div class="actions">
+          <button class="secondary" id="btnGaps">Requirement Gap</button>
+          <button class="secondary" id="btnCoverage">Test Coverage</button>
+          <button class="secondary" id="btnVulnerable">Vulnerable Areas</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="resultTitle" class="result-title"></div>
+        <pre id="resultBody" class="result"></pre>
+      </main>
+
+      <footer class="footer">
+        <a href="/">Start over</a>
+      </footer>
+    </div>
+
+    <script src="/results.js"></script>
+  </body>
+</html>
